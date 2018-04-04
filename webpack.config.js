@@ -18,6 +18,11 @@ module.exports = {
         filename: '[name].js',
         publicPath: '/'
     },
+    node: {
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
+    },
     plugins: [
         new HtmlWebpackPlugin({
           template: 'app/index.tpl.html',
@@ -31,19 +36,8 @@ module.exports = {
           'process.env.NODE_ENV': JSON.stringify('development')
         })
     ],
-    eslint: {
-        configFile: '.eslintrc',
-        failOnWarning: false,
-        failOnError: false
-    },
     module: {
-        preLoaders: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'eslint'
-            }
-        ],
+
         loaders: [
             {
                 test: /\.js?$/,
@@ -63,3 +57,18 @@ module.exports = {
         ]
     }
 };
+
+
+// eslint: {
+//     configFile: '.eslintrc',
+//     failOnWarning: false,
+//     failOnError: false
+// },
+
+// preLoaders: [
+//     {
+//         test: /\.js$/,
+//         exclude: /node_modules/,
+//         loader: 'eslint'
+//     }
+// ],

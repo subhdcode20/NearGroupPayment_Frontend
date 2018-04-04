@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {Provider} from 'react-redux';
-import {Route} from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
 
 import App from '../components/App';
+import MolPay from '../components/Payments/molPay'
+import PaymentSuccess from '../components/Payments/PaymentSuccess'
 import DevTools from './DevTools';
 
 export default function Root({store, history}) {
@@ -12,9 +14,13 @@ export default function Root({store, history}) {
         <Provider store={store}>
             <div>
                 <ConnectedRouter history={history}>
-                    <Route path="/" component={App}/>
+                  <Switch>
+                    <Route exact path="/" component={App}/>
+                    <Route exact path="/payment" component={MolPay} />
+                    <Route exact path="/paymentSuccess" component={PaymentSuccess} />
+                  </Switch>
                 </ConnectedRouter>
-                <DevTools />
+                {/*<DevTools />*/}
             </div>
         </Provider>
     );

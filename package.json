@@ -17,7 +17,10 @@
   "author": "Jean-Pierre Sierens",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
     "file-loader": "^0.9.0",
+    "md5": "^2.2.1",
     "prop-types": "^15.5.9",
     "react": "^15.0.2",
     "react-dom": "^15.0.2",
@@ -25,7 +28,9 @@
     "react-redux": "^4.4.5",
     "react-router-dom": "^4.1.1",
     "react-router-redux": "next",
-    "redux": "^3.5.2"
+    "redux": "^3.5.2",
+    "request": "^2.85.0",
+    "semantic-ui-react": "^0.79.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -44,7 +49,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "html-webpack-plugin": "^2.16.1",
     "json-loader": "^0.5.4",
-    "node-sass": "^3.7.0",
+    "node-sass": "^4.8.3",
     "postcss-loader": "^0.9.1",
     "react-addons-test-utils": "^15.0.2",
     "redux-devtools": "^3.2.0",
