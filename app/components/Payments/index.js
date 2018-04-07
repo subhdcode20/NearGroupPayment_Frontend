@@ -1,30 +1,39 @@
 import React, {Component} from 'react';
 import {Grid, Segment, Button} from 'semantic-ui-react';
 import _ from 'lodash'
+import moment from 'moment'
+import axios from 'axios'
+import querystring from 'query-string'
+import { withRouter } from 'react-router'
 import {Redirect} from 'react-router'
 import WalletTopUpPlans from './WalletTopUpPlans'
+import {connect} from 'react-redux'
+import {setCustomerId, setChannelId} from '../../actions/payment'
+import config from '../../config/index'
+
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+  // {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
+
 
 class PaymentsIndex extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
+      getCoinsDetailsLocalUrl: config.getUserCoinsDetails,  //"http://localhost:4040/mol/usercoinsdetails?customerId=",
       user: {
         name: 'Prashant'
       },
       totalCoins: 45,
-      accountHistory: [
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-        {date: '29 Mar', description: 'NG Joining Bonus', coinCount: '25'},
-      ],
+      accountHistory: [],
       howToUseCoins: {
         Gift: 'Give Coins to your chatmate as gifts',
         Reveal: 'Reveal your chatmate\'s identity',
@@ -63,7 +72,47 @@ class PaymentsIndex extends Component {
     this.setState({redirectToPayment: true})
   }
 
+  componentWillMount() {
+    let queryParams = querystring.parse(this.props.location.search)
+    console.log('queryParams in  will mount = ', queryParams, this.props);
+    let channelId = queryParams.channelId
+    let {getCoinsDetailsLocalUrl} = this.state
+    let that = this
+    // let getCoinsDetailsUrl =  "https://06489a03.ngrok.io/NG/getCoinHistory?channelId=" + channelId   //d65ac649d9f54ed1853c1bd3ddd0e693
+    getCoinsDetailsLocalUrl += channelId
+    this.props.dispatch(setCustomerId(channelId))
+    console.log('getCoinsDetailsLocalUrl= ', getCoinsDetailsLocalUrl);
+
+    axios.get(getCoinsDetailsLocalUrl)
+    .then((response) => {
+      // that.setState({loading: false}, () => {
+      //   console.log('loading removed ', this.state);
+      // })
+      console.log('mol get coin details response = ', response);
+
+      if(response.status == 200) {
+        console.log('mol response success');
+        that.setState({accountHistory: response.data.coinsDetails, totalCoins: response.data.totalCoins }, () => {
+          console.log('result state set', this.state);
+        })
+        // this.props.dispacth(setCustomerId(channelId))
+        this.props.dispatch(setChannelId(response.data.channelId))
+      } else {
+        console.log('mol payment result response error');
+      }
+    })
+    .catch(e => {
+      console.log('mol get coins details error ', e);
+      throw Error(e)
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('in index componentWillReceiveProps ', nextProps);
+  }
+
   render() {
+    console.log('index render props', this.props);
     let state = this.state
     return (
       <div>
@@ -94,13 +143,13 @@ class PaymentsIndex extends Component {
                       (
                         <Grid.Row key={index}>
                             <Grid.Column width={4} textAlign="left">
-                              <h5>{item.date}</h5>
+                              <h5>{moment(item.time).format("D/M/Y")}</h5>
                             </Grid.Column>
                             <Grid.Column width={8} textAlign="left">
                               <h5>{item.description}</h5>
                             </Grid.Column>
                             <Grid.Column width={4} textAlign="left">
-                              <h5>{item.coinCount}</h5>
+                              <h5>{item.coins} coins</h5>
                             </Grid.Column>
                         </Grid.Row>
                       )
@@ -234,6 +283,11 @@ class PaymentsIndex extends Component {
 
 }
 
+function mapStateToProps(state) {
+  console.log('in index mapStateToProps ', state );
+  return {
+    paymentData: state.payment
+  }
+}
 
-
-export default PaymentsIndex;
+export default withRouter(connect(mapStateToProps)(PaymentsIndex));

@@ -7,6 +7,13 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = {
+  devServer: {
+      inline: true,
+      contentBase: './dist',
+      port: 3000,
+      disableHostCheck: true,
+  },
+
     // The entry file. All your app roots from here.
     entry: [
         // Polyfills go here too, like babel-polyfill or whatwg-fetch
@@ -18,6 +25,11 @@ module.exports = {
         path: path.join(__dirname, '/dist/'),
         filename: '[name]-[hash].min.js',
         publicPath: '/'
+    },
+    node: {
+      fs: 'empty',
+      net: 'empty',
+      tls: 'empty'
     },
     plugins: [
         // webpack gives your modules and chunks ids to identify them. Webpack can vary the
@@ -56,21 +68,21 @@ module.exports = {
     ],
 
     // ESLint options
-    eslint: {
-        configFile: '.eslintrc',
-        failOnWarning: false,
-        failOnError: true
-    },
+    // eslint: {
+    //     configFile: '.eslintrc',
+    //     failOnWarning: false,
+    //     failOnError: true
+    // },
 
     module: {
         // Runs before loaders
-        preLoaders: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'eslint'
-            }
-        ],
+        // preLoaders: [
+        //     {
+        //         test: /\.js$/,
+        //         exclude: /node_modules/,
+        //         loader: 'eslint'
+        //     }
+        // ],
         // loaders handle the assets, like transforming sass to css or jsx to js.
         loaders: [{
             test: /\.js?$/,

@@ -6,6 +6,10 @@ import md5 from 'md5'
 import {Redirect} from 'react-router'
 import request from 'request'
 import WalletTopUpPlans from './WalletTopUpPlans'
+import {connect} from 'react-redux'
+import config from '../../config/index'
+
+console.log('config in molPay= ', config);
 
 class MolPay extends Component {
   constructor(props) {
@@ -13,7 +17,7 @@ class MolPay extends Component {
     this.state = {
       molUrl : "https://sandbox-api.mol.com/payout/payments",
       molUrlJava: "https://d0677600.ngrok.io/NG/molPaymentSend",
-      molUrlLocal: "http://localhost:4040/mol/molpaymentrequest",
+      molUrlLocal: config.paymentRequestApi,  //"https://f07932ef.ngrok.io/mol/molpaymentrequest",
       applicationName: 'NearGroup_api',
       applicationCode: '0xvon0HvIZlmyc2P0WY5QTmH5gncMqPu',
       Secret_Key: 'xcaLKxZafwIJd1zmxtv5nqJZ5GK1gNmR',
@@ -36,6 +40,10 @@ class MolPay extends Component {
     this.getAmountCurrency = this.getAmountCurrency.bind(this)
   }
 
+  componentWillMount(){
+
+  }
+
   getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 
@@ -46,8 +54,6 @@ class MolPay extends Component {
     let state = this.state
     let {returnUrl, referenceId, customerId, signature, channelId, amount, currencyCode} = state
 
-
-
     let body = {}
     switch (type) {
       case "CARRIER_BILLING":
@@ -55,7 +61,7 @@ class MolPay extends Component {
          body = {
           chid: channelId,
           chauth: customerId,
-          // paymentType: type
+          paymentType: type
         }
         this.setState({carrierBillingLoading: true})
         break;
@@ -76,35 +82,19 @@ class MolPay extends Component {
 
     }
 
+    // referenceId = state.referenceId + state.channelId + Math.floor(Date.now())
+    // console.log('referenceId raw=', referenceId);
+    // returnUrl = state.returnUrl + '' + referenceId
+    // console.log('returnUrl raw=', returnUrl);
+    // signature = state.amount  +  state.applicationCode  +  state.currencyCode  +  state.customerId  +  state.description
+    // + referenceId  + returnUrl  + state.version  + state.Secret_Key
+    // console.log('signature raw=', signature);
+    // signature = md5(signature)
+    // console.log('signature md5=', signature);
+    // this.setState({referenceId, returnUrl, signature}, () => {
+    //   console.log('new state set', this.state);
+    // })
 
-
-    referenceId = state.referenceId + state.channelId + Math.floor(Date.now())
-    console.log('referenceId raw=', referenceId);
-    returnUrl = state.returnUrl + '' + referenceId
-    console.log('returnUrl raw=', returnUrl);
-    signature = state.amount  +  state.applicationCode  +  state.currencyCode  +  state.customerId  +  state.description
-    + referenceId  + returnUrl  + state.version  + state.Secret_Key
-    console.log('signature raw=', signature);
-    signature = md5(signature)
-    console.log('signature md5=', signature);
-    this.setState({referenceId, returnUrl, signature}, () => {
-      console.log('new state set', this.state);
-    })
-    // let body = {
-    //   chid: customerId,
-    //   val: "1f9978080c8188e9bcc9111b2888d164",
-    //   ht: "USD 2",
-    //   chauth: channelId
-    //   // applicationCode: state.applicationCode,
-    //   // referenceId,
-    //   // version: state.version,
-    //   // amount: state.amount,
-    //   // currencyCode: state.currencyCode,
-    //   // returnUrl: returnUrl,
-    //   // description: state.description,
-    //   // customerId ,
-    //   // signature,
-    // }
     console.log('body=', body);
     let that = this
     axios.post(this.state.molUrlLocal,
@@ -121,9 +111,6 @@ class MolPay extends Component {
       if(response.status == 200) {
         console.log('mol response success');
         let {url} = response.data
-        // that.setState({paymentUrl: url}, () => {
-        //   console.log('paymentUrl set=', this.state.paymentUrl);
-        // })
         window.location = url
       } else {
         console.log('mol response error');
@@ -134,49 +121,19 @@ class MolPay extends Component {
       throw Error(e)
     })
 
-
-// var options = { method: 'POST',
-//   url: 'https://sandbox-api.mol.com/payout/payments',
-//   headers:
-//    {
-//      'Cache-Control': 'no-cache',
-//      'Access-Control-Allow-Origin': '*',
-//      'Content-Type': 'application/x-www-form-urlencoded' },
-//   form:
-//    { applicationCode: '0xvon0HvIZlmyc2P0WY5QTmH5gncMqPu',
-//      referenceId: 'TRX3401522329027278',
-//      version: 'v1',
-//      amount: '100',
-//      currencyCode: 'usd',
-//      returnUrl: 'https://b0453680.ngrok.io/NGpaymentSuccess?referenceId=TRX3401522329027278',
-//      description: 'NearGroup payment test',
-//      customerId: 'ac5d27e764d645edb3f9a90e5e3fb51b',
-//      signature: 'c4dc94b74d26d97cd4a846b9903793ec' } };
-//
-// request(options, function (error, response, body) {
-//   if (error) {
-//     console.log("error", error);
-//     throw new Error(error);}
-//
-//   console.log("api sucess-=",body);
-// });
-
-
-    // request.post({url: 'https://cors.io/?'+this.state.molUrl, form: body, function(err, response, body) {
-    //   if(err) {
-    //     console.log('request err=', err);
-    //   }
-    //   console.log('request form post response=', response);
-    // }})
-
   }
 
   getAmountCurrency(data) {
     this.setState({amount: data.amount, currencyCode: data.currencyCode})
   }
 
+  componentWillReceiveProps(nextProps) {
+    console.log('will receive props ', nextProps);
+    this.setState({customerId: nextProps.customerId, channelId: nextProps.channelId})
+  }
+
   render() {
-    console.log('molPay render', this.state);
+    console.log('molPay render', this.state, this.props);
     let state = this.state
     let showOtherOptionsButton = state.amount != 0 && state.currencyCode != ''
 
@@ -283,6 +240,12 @@ class MolPay extends Component {
 
 }
 
+function mapStateToProps(state) {
+  console.log('in index mapStateToProps ', state );
+  return {
+    paymentData: state.payment
+  }
+}
 
 
-export default MolPay;
+export default connect(mapStateToProps)(MolPay);
