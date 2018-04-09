@@ -24,7 +24,6 @@ class MolPaymentResult extends Component {
     }
 
     this.getPaymentStatus = this.getPaymentStatus.bind(this)
-    this.getRandomInt = this.getRandomInt.bind(this)
     this.getAmountCurrency = this.getAmountCurrency.bind(this)
   }
 
@@ -33,7 +32,7 @@ class MolPaymentResult extends Component {
     let queryParams = querystring.parse(this.props.location.search)
     let db_id = queryParams.referenceId
     this.setState({db_id: db_id})
-    let getStatusUrl = config.payemntResultApi  // "https://4bc947c2.ngrok.io/mol/molpaymentsuccess?referenceId=" + db_id
+    let getStatusUrl = config.payemntResultApi + db_id  // "https://4bc947c2.ngrok.io/mol/molpaymentsuccess?referenceId=" + db_id
     console.log('getStatusUrl = ', getStatusUrl);
     let that = this
     axios.get(getStatusUrl)
@@ -55,108 +54,6 @@ class MolPaymentResult extends Component {
       console.log('mol payment request error ', e);
       throw Error(e)
     })
-  }
-
-  getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-
-  }
-
-  getPaymentStatus(e, type) {
-    console.log('in getPaymentStatus', );
-    // let state = this.state
-    // let {returnUrl, referenceId, customerId, signature, channelId, amount, currencyCode} = state
-    //
-    // let body = {}
-    // switch (type) {
-    //   case "CARRIER_BILLING":
-    //     console.log('in carrier billing', type);
-    //      body = {
-    //       chid: customerId,
-    //       chauth: channelId,
-    //       paymentType: type
-    //     }
-    //     this.setState({carrierBillingLoading: true})
-    //     break;
-    //   case "OTHER_OPTIONS":
-    //     console.log('in other options');
-    //     body = {
-    //       chid: customerId,
-    //       val: "1f9978080c8188e9bcc9111b2888d164",
-    //       ht: "USD 2",
-    //       chauth: channelId,
-    //       paymentType: type,
-    //       amount: amount,
-    //       currencyCode: currencyCode
-    //     }
-    //     this.setState({otherOptionsLoading: true})
-    //     break;
-    //   default:
-    //
-    // }
-    //
-    //
-    //
-    // referenceId = state.referenceId + state.channelId + Math.floor(Date.now())
-    // console.log('referenceId raw=', referenceId);
-    // returnUrl = state.returnUrl + '' + referenceId
-    // console.log('returnUrl raw=', returnUrl);
-    // signature = state.amount  +  state.applicationCode  +  state.currencyCode  +  state.customerId  +  state.description
-    // + referenceId  + returnUrl  + state.version  + state.Secret_Key
-    // console.log('signature raw=', signature);
-    // signature = md5(signature)
-    // console.log('signature md5=', signature);
-    // this.setState({referenceId, returnUrl, signature}, () => {
-    //   console.log('new state set', this.state);
-    // })
-    // // let body = {
-    // //   chid: customerId,
-    // //   val: "1f9978080c8188e9bcc9111b2888d164",
-    // //   ht: "USD 2",
-    // //   chauth: channelId
-    // //   // applicationCode: state.applicationCode,
-    // //   // referenceId,
-    // //   // version: state.version,
-    // //   // amount: state.amount,
-    // //   // currencyCode: state.currencyCode,
-    // //   // returnUrl: returnUrl,
-    // //   // description: state.description,
-    // //   // customerId ,
-    // //   // signature,
-    // // }
-    // console.log('body=', body);
-    // let that = this
-    // axios.post(this.state.molUrlLocal,
-    //   body,
-    //   {
-    //     headers: {
-    //       'Access-Control-Allow-Origin': '*',
-    //       'Content-Type': 'application/json'
-    //     }
-    //   }
-    // )
-    // .then((response) => {
-    //   console.log('mol response = ', response);
-    //   if(response.status == 200) {
-    //     console.log('mol response success');
-    //     let {url} = response.data
-    //     // that.setState({paymentUrl: url}, () => {
-    //     //   console.log('paymentUrl set=', this.state.paymentUrl);
-    //     // })
-    //     window.location = url
-    //   } else {
-    //     console.log('mol response error');
-    //   }
-    // })
-    // .catch(e => {
-    //   console.log('mol payment request error ', e);
-    //   throw Error(e)
-    // })
-
-  }
-
-  getAmountCurrency(data) {
-    this.setState({amount: data.amount, currencyCode: data.currencyCode})
   }
 
   PaymentResultdisplay({data}) {

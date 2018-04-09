@@ -9,10 +9,10 @@ import MolPaymentResult from './components/Payments/PaymentResult'
 
 export default (
 	<Switch>
-		<Route exact path="/" component={PaymentIndex} />
-		<Route exact path="/payment_status" component={MolPaymentResult} />
-		<Route exact path="/payment" component={MolPay} />
-		<Route exact path="/about" component={About} />
-		<Route exact path="/NGpaymentSuccess" component={PaymentSuccess} />
+		// <Route exact path="/" component={PaymentIndex} />
+		// <Route exact path="/payment_status" component={MolPaymentResult} />
+		// <Route exact path="/payment" component={MolPay} />
+		// <Route exact path="/about" component={About} />
+		// <Route exact path="/NGpaymentSuccess" component={PaymentSuccess} />
 	</Switch>
 );

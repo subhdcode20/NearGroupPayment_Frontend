@@ -11,6 +11,11 @@ import config from '../../config/index'
 
 console.log('config in molPay= ', config);
 
+var pageBodyStyle = {
+  maxWidth: 500,
+  margin: 'auto'
+}
+
 class MolPay extends Component {
   constructor(props) {
     super(props)
@@ -52,7 +57,12 @@ class MolPay extends Component {
   initiateMolPayment(e, type) {
     console.log('in initiateMolPayment', );
     let state = this.state
-    let {returnUrl, referenceId, customerId, signature, channelId, amount, currencyCode} = state
+    let {returnUrl, referenceId,  signature,  amount, currencyCode} = state
+
+    //for live build get channelId and customerId from store.
+    //only carrier billing configured for testing.
+    let {customerId, channelId} = this.props.paymentData
+    console.log('got customerId and channelId for mol from store=', customerId, channelId);
 
     let body = {}
     switch (type) {
@@ -138,7 +148,7 @@ class MolPay extends Component {
     let showOtherOptionsButton = state.amount != 0 && state.currencyCode != ''
 
     return (
-      <div>
+      <div style={pageBodyStyle}>
         <Grid container style={{marginTop: 50}}>
           <Grid.Row>
             <Grid.Column width={16} textAlign="center" verticalAlign="middle" style={{marginTop: 50}}>
@@ -155,20 +165,6 @@ class MolPay extends Component {
             <Grid.Column width={16} textAlign="center" verticalAlign="middle">
               <Button size="big" content="Carrier Billing" basic color="red"
               loading={this.state.carrierBillingLoading}  onClick={e => this.initiateMolPayment(e, "CARRIER_BILLING")} />
-              {/**
-                <form method="post" action={this.state.molUrl}>
-                    <input type="text" name="applicationCode" value={state.applicationCode} style={{display:"none"}}/><br/>
-                    <input type="text" name="referenceId" value={state.referenceId} style={{display:"none"}}/><br/>
-                    <input type="text" name="version" value={state.version} style={{display:"none"}}/><br/>
-                    <input type="text" name="amount" value={state.amount} style={{display:"none"}}/><br/>
-                    <input type="text" name="currencyCode" value={state.currencyCode} style={{display:"none"}}/><br/>
-                    <input type="text" name="returnUrl" value={state.returnUrl} style={{display:"none"}}/><br/>
-                    <input type="text" name="description" value={state.description} style={{display:"none"}}/><br/>
-                    <input type="text" name="customerId" value={state.customerId} style={{display:"none"}}/><br/>
-                    <input type="text" name="signature" value={state.signature} style={{display:"none"}}/><br/>
-                    <input type="submit" value="Pay"/>
-                </form>
-              **/}
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>

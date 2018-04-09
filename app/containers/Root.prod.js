@@ -1,19 +1,27 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Route } from 'react-router-dom';
+import { Route, HashRouter } from 'react-router-dom';
 import { ConnectedRouter } from 'react-router-redux';
 
 import App from '../components/App';
+import MolPay from '../components/Payments/molPay'
+import PaymentSuccess from '../components/Payments/PaymentSuccess'
+import MolPaymentResult from '../components/Payments/PaymentResult'
+import DevTools from './DevTools';
+import Routes from '../routes'
 
 export default function Root({store, history}) {
     return (
         <Provider store={store}>
+          <HashRouter>
             <div>
-                <ConnectedRouter history={history}>
-                    <Route path="/" component={App}/>
-                </ConnectedRouter>
+                <Route exact path="/" component={App}/>
+                <Route exact path="/payment" component={MolPay} />
+                <Route exact path="/payment_status" component={MolPaymentResult} />
+                <Route exact path="/paymentSuccess" component={PaymentSuccess} />
             </div>
+          </HashRouter>
         </Provider>
     );
 }

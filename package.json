@@ -18,8 +18,10 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-preset-env": "^1.6.1",
     "cors": "^2.8.4",
     "file-loader": "^0.9.0",
+    "material-ui": "^0.20.0",
     "md5": "^2.2.1",
     "moment": "^2.22.0",
     "prop-types": "^15.5.9",
