@@ -23,8 +23,6 @@ class MolPaymentResult extends Component {
       db_id: ''
     }
 
-    this.getPaymentStatus = this.getPaymentStatus.bind(this)
-    this.getAmountCurrency = this.getAmountCurrency.bind(this)
   }
 
   componentWillMount() {
