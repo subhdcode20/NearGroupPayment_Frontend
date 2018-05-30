@@ -10,9 +10,9 @@ class MolPay extends Component {
     super(props)
     this.state = {
       topUpPlans: [
-        {amount: 2, coins: 100, currencyCode: 'usd'},
-        {amount: 10, coins: 750, currencyCode: 'usd'},
-        {amount: 20, coins: 2000, currencyCode: 'usd'}
+        {amount: 100, coins: 100, currencyCode: 'php'},
+        {amount: 500, coins: 750, currencyCode: 'php'},
+        {amount: 20, coins: 2000, currencyCode: 'php'}
       ],
       redirectToPayment: false
     }

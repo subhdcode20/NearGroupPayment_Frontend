@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { footer } from '../styles/footer.scss';
 import Routes from '../routes';
 import PaymentsIndex from './Payments/index'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const App = () =>
-    <div>
-      <PaymentsIndex />
+    (<div>
+       <MuiThemeProvider>
+        <PaymentsIndex />
+       </MuiThemeProvider>
 
 
         {/**
@@ -17,6 +20,6 @@ const App = () =>
             <Link to="/about">About</Link>
         </footer>
         **/}
-    </div>;
+    </div>)
 
 export default App;

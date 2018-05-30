@@ -11,3 +11,17 @@ export const setChannelId = (data) => {
         payload: data
     };
 }
+
+export const setCoinsDetails = (data) => {
+    return {
+        type: "SET_COINS_DETAILS",
+        payload: data
+    };
+}
+
+export const setPaymentMethod = (data) => {
+    return {
+        type: "SET_PAYMENT_METHOD",
+        payload: data
+    };
+}

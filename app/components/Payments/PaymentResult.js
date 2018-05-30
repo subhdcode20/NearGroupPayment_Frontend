@@ -20,20 +20,30 @@ class MolPaymentResult extends Component {
       loading: true,
       loadError: false,
       paymentResult: {},
-      db_id: ''
+      referenceId: '',
+      customerId: '',
+      MyCoinsUrl: ''
     }
-
+    this.handleBackToHome = this.handleBackToHome.bind(this)
   }
 
   componentWillMount() {
     console.log('payment result will mount props=', this.props);
     let queryParams = querystring.parse(this.props.location.search)
-    let db_id = queryParams.referenceId
-    this.setState({db_id: db_id})
-    let getStatusUrl = config.payemntResultApi + db_id  // "https://4bc947c2.ngrok.io/mol/molpaymentsuccess?referenceId=" + db_id
+    let referenceId = this.props.referenceId  //queryParams.referenceId
+    this.setState({referenceId: referenceId})
+    let getStatusUrl = config.payemntResultApi //+ referenceId  // "https://4bc947c2.ngrok.io/mol/molpaymentsuccess?referenceId=" + referenceId
     console.log('getStatusUrl = ', getStatusUrl);
+    let body = {
+      referenceId: referenceId
+    }
     let that = this
-    axios.get(getStatusUrl)
+    axios.post(getStatusUrl, body, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      }
+    })
     .then((response) => {
       that.setState({loading: false}, () => {
         console.log('loading removed ', this.state);
@@ -41,7 +51,7 @@ class MolPaymentResult extends Component {
       console.log('mol payemnt result response = ', response);
       if(response.status == 200) {
         console.log('mol response success');
-        that.setState({paymentResult: response.data}, () => {
+        that.setState({paymentResult: response.data, customerId: response.data.res_json.customerId}, () => {
           console.log('result state set', this.state);
         })
       } else {
@@ -67,7 +77,7 @@ class MolPaymentResult extends Component {
                 <Fa name="check-circle" size="5x" />
               </Grid.Column>
               <Grid.Column textAlign="center" verticalAlign="middle" width={16}>
-                <h2>Payment Successfull!!</h2>
+                <h2 style={{color: '#199aab'}}><strong>Payment Successful!</strong></h2>
               </Grid.Column>
               <Grid.Column textAlign="center" verticalAlign="middle" width={16}>
                 <h2>Payment Details:</h2>
@@ -82,13 +92,13 @@ class MolPaymentResult extends Component {
                 <p><strong>Amount</strong></p>
               </Grid.Column>
               <Grid.Column textAlign="left" verticalAlign="middle" width={8}>
-                <p>{data.res_json.amount} {data.res_json.currencyCode}</p>
+                <p>{Number(data.res_json.amount)/100} {data.res_json.currencyCode}</p>
               </Grid.Column>
               <Grid.Column textAlign="right" verticalAlign="middle" width={8}>
                 <p><strong>Date</strong></p>
               </Grid.Column>
               <Grid.Column textAlign="left" verticalAlign="middle" width={8}>
-                <p>{moment(data.res_json.paymentStatusDate).format("D M Y")}</p>
+                <p>{moment(data.res_json.paymentStatusDate).format("D MMM Y")}</p>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -103,7 +113,7 @@ class MolPaymentResult extends Component {
                 <Fa name="exclamation-triangle" size="5x" />
               </Grid.Column>
               <Grid.Column textAlign="center" verticalAlign="middle" width={16}>
-                <h2>Payment Incomplete!!</h2>
+                <h2 style={{color: '#199aab'}}><strong>Payment Incomplete!</strong></h2>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -118,7 +128,7 @@ class MolPaymentResult extends Component {
                 <Fa name="times-circle" size="5x" />
               </Grid.Column>
               <Grid.Column textAlign="center" verticalAlign="middle" width={16}>
-                <h2>Payment Failed as expired!!</h2>
+                <h2 style={{color: '#199aab'}}><strong>Payment Expired!</strong></h2>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -133,16 +143,23 @@ class MolPaymentResult extends Component {
                 <Fa name="times-circle" size="5x" />
               </Grid.Column>
               <Grid.Column textAlign="center" verticalAlign="middle" width={16}>
-                <h2>Payment Failed!!</h2>
+                <h2 style={{color: '#199aab'}}><strong>Payment Failed!!</strong></h2>
               </Grid.Column>
             </Grid.Row>
           </Grid>
         )
         break;
       default:
-
+        return null
     }
     return elem
+  }
+
+  handleBackToHome() {
+    var MyCoinsUrl= window.location.origin
+    console.log("in handleBackToHome, ");
+    window.location = MyCoinsUrl + '/?channelId=' + this.state.customerId
+    console.log("MyCoinsUrl = ", MyCoinsUrl + '/?channelId=' + this.state.customerId)
   }
 
   render() {
@@ -151,24 +168,29 @@ class MolPaymentResult extends Component {
 
     return (
       <div>
-        <Grid container style={{marginTop: 50}}>
+        <Grid container>
         {
           state.loading
           ?
           (<Grid.Row>
             <Grid.Column width={16} textAlign="center" verticalAlign="middle" style={{marginTop: 50}}>
-              <h3 style={{fontWeight: 500}}>Fetching result..</h3>
+              <h2 style={{color: '#199aab'}}><strong>Fetching result..</strong></h2>
             </Grid.Column>
           </Grid.Row>)
           :
           (<Grid.Row>
             <Grid.Column width={16} textAlign="center" verticalAlign="middle" style={{marginTop: 50}}>
-              <Segment>
               { !_.isEmpty(state.paymentResult) && <this.PaymentResultdisplay data={state.paymentResult} />}
-              </Segment>
             </Grid.Column>
           </Grid.Row>)
         }
+        <Grid.Row>
+          <Grid.Column width={16} textAlign="center" verticalAlign="middle">
+            <Button content="Back to Coin History" onClick={this.handleBackToHome} size="large" circular
+              style={{backgroundColor: '#e56f65',  color: '#ffffff'}}
+            />
+          </Grid.Column>
+        </Grid.Row>
         </Grid>
       </div>
     )
